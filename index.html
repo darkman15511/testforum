@@ -1,0 +1,2001 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>CTRP - Криминальный Симферополь | GTA 5 RP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: #0a0618;
+      font-family: 'Inter', sans-serif;
+      color: #fff;
+      line-height: 1.5;
+      padding: 16px 12px 40px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: 
+        radial-gradient(circle at 15% 20%, rgba(255, 0, 128, 0.4), transparent 45%),
+        radial-gradient(circle at 85% 15%, rgba(0, 200, 255, 0.35), transparent 45%),
+        radial-gradient(circle at 25% 80%, rgba(180, 0, 255, 0.4), transparent 45%),
+        radial-gradient(circle at 80% 85%, rgba(255, 200, 0, 0.25), transparent 45%);
+      z-index: -2;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(10, 6, 24, 0.7), rgba(10, 6, 24, 0.95));
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* ============ ЛЕЙАУТ ============ */
+    .layout {
+      max-width: 1400px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 24px;
+      align-items: start;
+      z-index: 10;
+    }
+
+    .page-container { width: 100%; min-width: 0; }
+
+    /* ============ ПРАВАЯ ПАНЕЛЬ ПРОФИЛЯ ============ */
+    .profile-sidebar {
+      position: sticky;
+      top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-height: calc(100vh - 32px);
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .profile-sidebar::-webkit-scrollbar { width: 4px; }
+    .profile-sidebar::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #ff00a8, #7b00ff);
+      border-radius: 10px;
+    }
+
+    .profile-card {
+      background: rgba(15, 8, 35, 0.9);
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.9);
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .profile-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #ff00a8, #7b00ff, #00d4ff);
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .profile-avatar-lg {
+      width: 60px;
+      height: 60px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 900;
+      color: #fff;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, #ff00a8, #7b00ff, #00d4ff);
+      box-shadow: 0 10px 25px -8px rgba(255, 0, 168, 0.7);
+      position: relative;
+    }
+
+    .profile-avatar-lg .status-dot {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      width: 16px;
+      height: 16px;
+      background: #2ecc71;
+      border-radius: 50%;
+      border: 3px solid #0f0823;
+      box-shadow: 0 0 10px #2ecc71;
+    }
+
+    .profile-header-info {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .profile-fullname {
+      font-size: 16px;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .profile-username {
+      font-size: 12px;
+      font-weight: 600;
+      color: #8895c0;
+    }
+
+    .profile-role-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 10.5px;
+      font-weight: 800;
+      padding: 4px 11px;
+      border-radius: 40px;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      margin-top: 4px;
+      background: linear-gradient(135deg, #aaff00, #00ff88);
+      color: #003322;
+      width: fit-content;
+    }
+
+    .profile-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .profile-stat {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 9px 4px;
+      text-align: center;
+    }
+
+    .profile-stat .num {
+      font-size: 14px;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.2;
+    }
+
+    .profile-stat .lbl {
+      font-size: 9.5px;
+      font-weight: 600;
+      color: #8895c0;
+      text-transform: uppercase;
+      letter-spacing: 0.2px;
+      margin-top: 2px;
+    }
+
+    .profile-actions { display: flex; flex-direction: column; gap: 8px; }
+
+    .profile-btn {
+      width: 100%;
+      padding: 11px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s;
+    }
+
+    .profile-btn:hover { background: rgba(255, 255, 255, 0.1); transform: translateX(3px); }
+    .profile-btn i { font-size: 14px; color: #00d4ff; }
+    .profile-btn.danger { border-color: rgba(255, 0, 100, 0.3); color: #ff6699; }
+    .profile-btn.danger i { color: #ff6699; }
+    .profile-btn.danger:hover { background: rgba(255, 0, 100, 0.12); }
+
+    .profile-guest { text-align: center; padding: 4px 0; }
+
+    .profile-guest .guest-icon {
+      width: 60px; height: 60px; border-radius: 20px;
+      margin: 0 auto 12px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px dashed rgba(255, 255, 255, 0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; color: #8895c0;
+    }
+
+    .profile-guest h4 { font-size: 15px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+    .profile-guest p { font-size: 12.5px; color: #8895c0; margin-bottom: 14px; line-height: 1.5; }
+
+    /* ============ ХЕДЕР ============ */
+    .forum-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      gap: 12px;
+      background: rgba(15, 8, 35, 0.85);
+      border-radius: 24px;
+      padding: 16px 18px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.9);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .forum-header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #ff00a8, #7b00ff, #00d4ff, #aaff00);
+    }
+
+    .logo-area { display: flex; align-items: center; gap: 12px; min-width: 0; }
+
+    .logo-icon {
+      width: 48px; height: 48px;
+      background: linear-gradient(135deg, #ff00a8, #7b00ff, #00d4ff);
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 12px 35px -8px rgba(255, 0, 168, 0.6);
+      transform: rotate(3deg);
+      transition: transform 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .logo-icon i { font-size: 24px; color: #fff; }
+
+    .logo-text h1 {
+      font-size: 17px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      background: linear-gradient(90deg, #ff00a8, #00d4ff, #aaff00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.2;
+    }
+
+    .logo-text span {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #a8b0ff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .logo-text span i { font-size: 10px; color: #00d4ff; }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 6px;
+      background: rgba(20, 12, 45, 0.8);
+      padding: 6px;
+      border-radius: 50px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+      flex: 1;
+      min-width: 0;
+    }
+
+    .nav-tab {
+      flex: 1;
+      padding: 10px 10px;
+      border-radius: 50px;
+      font-size: 12.5px;
+      font-weight: 800;
+      color: #a8b0d6;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      border: none;
+      background: transparent;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .nav-tab:hover { color: #fff; background: rgba(255, 255, 255, 0.06); }
+
+    .nav-tab.active {
+      background: linear-gradient(135deg, #ff00a8, #7b00ff, #00d4ff);
+      color: #fff;
+      box-shadow: 0 12px 30px -8px rgba(255, 0, 168, 0.6);
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Кнопки авторизации в хедере */
+    .auth-header-btn {
+      padding: 11px 18px;
+      border-radius: 50px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      white-space: nowrap;
+    }
+
+    .auth-header-btn:hover { background: rgba(255, 255, 255, 0.12); transform: translateY(-2px); }
+
+    .auth-header-btn.primary {
+      border: none;
+      background: linear-gradient(135deg, #ff00a8, #7b00ff, #00d4ff);
+      box-shadow: 0 12px 28px -8px rgba(255, 0, 168, 0.7);
+      color: #fff;
+    }
+
+    .auth-header-btn.primary:hover { box-shadow: 0 18px 38px -8px rgba(255, 0, 168, 0.9); }
+
+    /* Мобильная кнопка профиля */
+    .mobile-profile-btn {
+      display: none;
+      width: 44px; height: 44px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #ff00a8, #7b00ff);
+      border: none;
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 25px -8px rgba(255, 0, 168, 0.7);
+      flex-shrink: 0;
+    }
+
+    /* ============ КАРТОЧКИ ФОРУМА ============ */
+    .forum-card {
+      background: rgba(15, 8, 35, 0.85);
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.9);
+      padding: 20px 18px;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+
+    .forum-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #ff00a8, #7b00ff, #00d4ff, #aaff00);
+    }
+
+    .faction-title {
+      font-size: 18px;
+      font-weight: 900;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .faction-title .faction-icon {
+      width: 42px; height: 42px;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 19px; color: #fff; flex-shrink: 0;
+    }
+
+    .faction-title.state .faction-icon { background: linear-gradient(135deg, #00d4ff, #0099ff, #7b00ff); }
+    .faction-title.state h2 {
+      background: linear-gradient(90deg, #00d4ff, #7b00ff);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    .faction-title.crime .faction-icon { background: linear-gradient(135deg, #ff0000, #ff00a8, #7b00ff); }
+    .faction-title.crime h2 {
+      background: linear-gradient(90deg, #ff0000, #ff00a8);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    .faction-title.law .faction-icon { background: linear-gradient(135deg, #ffd700, #ff8800, #ff4500); }
+    .faction-title.law h2 {
+      background: linear-gradient(90deg, #ffd700, #ff8800);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    .faction-title h2 { font-size: 18px; font-weight: 900; }
+
+    .faction-title .cat-count {
+      margin-left: auto;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 5px 12px;
+      border-radius: 50px;
+      background: rgba(255, 255, 255, 0.06);
+      color: #b0bce0;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .thread-list { display: flex; flex-direction: column; gap: 9px; }
+
+    .thread-item {
+      background: rgba(12, 6, 30, 0.7);
+      border-radius: 16px;
+      padding: 14px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      gap: 10px;
+    }
+
+    .thread-item::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: linear-gradient(180deg, #ff00a8, #7b00ff, #00d4ff);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .thread-item:hover {
+      background: rgba(25, 12, 55, 0.9);
+      border-color: rgba(255, 0, 168, 0.3);
+      transform: translateX(3px);
+    }
+
+    .thread-item:hover::before { opacity: 1; }
+
+    .thread-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1 1 240px;
+      min-width: 0;
+    }
+
+    .thread-icon {
+      width: 42px; height: 42px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; color: #fff; flex-shrink: 0;
+    }
+
+    .icon-ugibdd { background: linear-gradient(135deg, #00d4ff, #0099ff); }
+    .icon-uvd { background: linear-gradient(135deg, #0099ff, #0055cc); }
+    .icon-military { background: linear-gradient(135deg, #006633, #00aa55); }
+    .icon-fsin { background: linear-gradient(135deg, #4a5568, #2d3748); }
+    .icon-cgb { background: linear-gradient(135deg, #ff0044, #ff0066); }
+    .icon-moscow { background: linear-gradient(135deg, #ff00a8, #ff5e00); }
+    .icon-gov { background: linear-gradient(135deg, #7b00ff, #00d4ff); }
+    .icon-court { background: linear-gradient(135deg, #ffd700, #ffaa00); }
+    .icon-sk { background: linear-gradient(135deg, #1a365d, #2c5282); }
+    .icon-prokuratura { background: linear-gradient(135deg, #0066cc, #004499); }
+    .icon-fsb { background: linear-gradient(135deg, #001a33, #004488); }
+    .icon-fso { background: linear-gradient(135deg, #4a1a00, #883300); }
+    .icon-rosgvardia { background: linear-gradient(135deg, #7b0000, #cc0000); }
+    .icon-black-quarter { background: linear-gradient(135deg, #1a1a1a, #4a4a4a); }
+    .icon-night-wolves { background: linear-gradient(135deg, #2d1b4e, #7b00ff); }
+    .icon-northern { background: linear-gradient(135deg, #0a3d62, #1e6091); }
+    .icon-volzhskie { background: linear-gradient(135deg, #3d0c0c, #8b0000); }
+    .icon-criminal-code { background: linear-gradient(135deg, #8b0000, #ff4500); }
+    .icon-admin-code { background: linear-gradient(135deg, #1e3a8a, #3b82f6); }
+    .icon-procedural-code { background: linear-gradient(135deg, #4c1d95, #8b5cf6); }
+
+    .thread-text { display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1; }
+
+    .thread-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      line-height: 1.25;
+    }
+
+    .thread-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #a8b0d6;
+      flex-wrap: wrap;
+    }
+
+    .thread-meta i { font-size: 10px; margin-right: 3px; color: #7b88b8; }
+
+    .badge {
+      font-size: 9px;
+      font-weight: 800;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #ff00a8, #d400ff);
+      color: white;
+      padding: 3px 9px;
+      border-radius: 40px;
+      letter-spacing: 0.4px;
+      display: inline-block;
+      line-height: 1.3;
+    }
+
+    .badge.blue { background: linear-gradient(135deg, #00d4ff, #0099ff); }
+    .badge.gold { background: linear-gradient(135deg, #ffd700, #ffaa00); color: #332200; }
+
+    .thread-stats {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+      color: #b0bce0;
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 5px 10px;
+      border-radius: 40px;
+      border: 0.5px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .stat-item i { font-size: 11px; color: #ff00a8; }
+
+    /* ============ ВКЛАДКА РОЛИ ============ */
+    .search-wrapper { max-width: 100%; margin: 0 auto 20px; position: relative; }
+
+    .search-wrapper i {
+      position: absolute;
+      left: 18px; top: 50%;
+      transform: translateY(-50%);
+      color: #7b88b8;
+      font-size: 15px;
+      pointer-events: none;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 14px 18px 14px 46px;
+      border-radius: 50px;
+      background: rgba(20, 12, 45, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .search-input::placeholder { color: #6a7aa8; }
+    .search-input:focus {
+      border-color: rgba(255, 0, 168, 0.6);
+      box-shadow: 0 0 0 4px rgba(255, 0, 168, 0.15);
+    }
+
+    .category-section { margin-bottom: 24px; }
+
+    .category-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 2px dashed rgba(255, 255, 255, 0.08);
+      flex-wrap: wrap;
+    }
+
+    .category-header .cat-icon {
+      width: 38px; height: 38px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px; color: #fff; flex-shrink: 0;
+    }
+
+    .category-header h2 { font-size: 16px; font-weight: 900; color: #fff; flex: 1; min-width: 0; }
+
+    .category-header .cat-count {
+      font-size: 11px; font-weight: 800;
+      padding: 4px 11px; border-radius: 50px;
+      background: rgba(255, 255, 255, 0.06);
+      color: #b0bce0;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .cat-founders .cat-icon { background: linear-gradient(135deg, #ff0000, #ff00a8); }
+    .cat-founders h2 { color: #ff66cc; }
+    .cat-leadership .cat-icon { background: linear-gradient(135deg, #ff0080, #ff5e00); }
+    .cat-leadership h2 { color: #ffb366; }
+    .cat-admins .cat-icon { background: linear-gradient(135deg, #ffcc00, #ff8800); }
+    .cat-admins h2 { color: #ffe066; }
+    .cat-moderators .cat-icon { background: linear-gradient(135deg, #aaff00, #00ff88); }
+    .cat-moderators h2 { color: #ccff66; }
+    .cat-media .cat-icon { background: linear-gradient(135deg, #00d4ff, #0099ff); }
+    .cat-media h2 { color: #66e0ff; }
+    .cat-tech .cat-icon { background: linear-gradient(135deg, #7b00ff, #d400ff); }
+    .cat-tech h2 { color: #e066ff; }
+    .cat-curators .cat-icon { background: linear-gradient(135deg, #00ffd5, #00b8ff); }
+    .cat-curators h2 { color: #66fff0; }
+    .cat-hr .cat-icon { background: linear-gradient(135deg, #ff5e00, #ff00a8); }
+    .cat-hr h2 { color: #ff9966; }
+
+    .roles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 10px;
+    }
+
+    .role-card {
+      background: rgba(20, 12, 45, 0.75);
+      border-radius: 16px;
+      padding: 12px 14px;
+      display: flex; align-items: center; gap: 11px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+      position: relative; overflow: hidden;
+    }
+
+    .role-card:hover { transform: translateY(-3px); border-color: rgba(255, 255, 255, 0.25); }
+
+    .role-icon {
+      width: 42px; height: 42px; border-radius: 13px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 19px; color: #fff; flex-shrink: 0;
+      transition: transform 0.2s;
+    }
+
+    .role-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .role-name { font-size: 12.5px; font-weight: 800; color: #fff; line-height: 1.25; }
+    .role-desc { font-size: 10.5px; font-weight: 500; color: #a8b0d6; line-height: 1.3; }
+
+    .role-founder .role-icon { background: linear-gradient(135deg, #ff0000, #ff00a8); }
+    .role-founder { border-color: rgba(255, 0, 168, 0.4); background: rgba(60, 0, 40, 0.5); }
+    .role-founder .role-name { color: #ff66cc; }
+
+    .role-chief-admin .role-icon { background: linear-gradient(135deg, #ffcc00, #ff8800); }
+    .role-chief-admin { border-color: rgba(255, 204, 0, 0.4); background: rgba(60, 45, 0, 0.5); }
+    .role-chief-admin .role-name { color: #ffe066; }
+
+    .role-admin-l5 .role-icon { background: linear-gradient(135deg, #ff00a8, #d400ff); }
+    .role-admin-l5 { border-color: rgba(255, 0, 168, 0.4); background: rgba(50, 0, 50, 0.5); }
+    .role-admin-l5 .role-name { color: #ff66cc; }
+
+    .role-admin-l4 .role-icon { background: linear-gradient(135deg, #d400ff, #7b00ff); }
+    .role-admin-l4 { border-color: rgba(212, 0, 255, 0.4); background: rgba(40, 0, 55, 0.5); }
+    .role-admin-l4 .role-name { color: #cc66ff; }
+
+    .role-admin-l3 .role-icon { background: linear-gradient(135deg, #7b00ff, #00d4ff); }
+    .role-admin-l3 { border-color: rgba(123, 0, 255, 0.4); background: rgba(30, 0, 55, 0.5); }
+    .role-admin-l3 .role-name { color: #9966ff; }
+
+    .role-admin-l2 .role-icon { background: linear-gradient(135deg, #00d4ff, #0099ff); }
+    .role-admin-l2 { border-color: rgba(0, 212, 255, 0.4); background: rgba(0, 30, 55, 0.5); }
+    .role-admin-l2 .role-name { color: #66e0ff; }
+
+    .role-admin-l1 .role-icon { background: linear-gradient(135deg, #0099ff, #00d4ff); }
+    .role-admin-l1 { border-color: rgba(0, 153, 255, 0.4); background: rgba(0, 25, 55, 0.5); }
+    .role-admin-l1 .role-name { color: #66bbff; }
+
+    .role-mod .role-icon { background: linear-gradient(135deg, #aaff00, #00ff88); }
+    .role-mod { border-color: rgba(170, 255, 0, 0.35); background: rgba(25, 55, 0, 0.5); }
+    .role-mod .role-name { color: #ccff66; }
+
+    .role-mod-discord .role-icon { background: linear-gradient(135deg, #5865F2, #4752C4); }
+    .role-mod-discord { border-color: rgba(88, 101, 242, 0.4); background: rgba(20, 25, 60, 0.5); }
+    .role-mod-discord .role-name { color: #8892ff; }
+
+    .role-mod-vk .role-icon { background: linear-gradient(135deg, #0077FF, #0055CC); }
+    .role-mod-vk { border-color: rgba(0, 119, 255, 0.4); background: rgba(0, 20, 55, 0.5); }
+    .role-mod-vk .role-name { color: #66aaff; }
+
+    .role-mod-tg .role-icon { background: linear-gradient(135deg, #229ED9, #0088CC); }
+    .role-mod-tg { border-color: rgba(34, 158, 217, 0.4); background: rgba(0, 30, 50, 0.5); }
+    .role-mod-tg .role-name { color: #66ccff; }
+
+    .role-media-chief .role-icon { background: linear-gradient(135deg, #00d4ff, #0099ff); }
+    .role-media-chief { border-color: rgba(0, 212, 255, 0.4); background: rgba(0, 30, 60, 0.5); }
+    .role-media-chief .role-name { color: #66e0ff; }
+
+    .role-curator-state .role-icon { background: linear-gradient(135deg, #00d4ff, #00b8ff); }
+    .role-curator-state { border-color: rgba(0, 212, 255, 0.3); background: rgba(0, 28, 45, 0.5); }
+    .role-curator-state .role-name { color: #66ddff; }
+
+    .role-curator-crime .role-icon { background: linear-gradient(135deg, #00b8ff, #0099ff); }
+    .role-curator-crime { border-color: rgba(0, 184, 255, 0.3); background: rgba(0, 25, 45, 0.5); }
+    .role-curator-crime .role-name { color: #66bbff; }
+
+    .role-tech-support .role-icon { background: linear-gradient(135deg, #7b00ff, #d400ff); }
+    .role-tech-support { border-color: rgba(212, 0, 255, 0.4); background: rgba(35, 0, 55, 0.5); }
+    .role-tech-support .role-name { color: #e066ff; }
+
+    .role-hr-admin .role-icon { background: linear-gradient(135deg, #ff5e00, #ff00a8); }
+    .role-hr-admin { border-color: rgba(255, 94, 0, 0.4); background: rgba(55, 20, 30, 0.5); }
+    .role-hr-admin .role-name { color: #ff9966; }
+
+    /* ============ ВКЛАДКА ВЫДАЧА РОЛЕЙ ============ */
+    .issue-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    /* ============ МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ ============ */
+    .auth-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 2, 15, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: flex;
+      align-items: flex-start;   /* На мобильных — вверху */
+      justify-content: center;
+      padding: 0;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .auth-overlay.open { opacity: 1; visibility: visible; }
+
+    .auth-modal {
+      width: 100%;
+      max-width: 460px;
+      background: rgba(15, 8, 35, 0.98);
+      border-radius: 0 0 28px 28px;   /* Скругление снизу на мобильных */
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-top: none;
+      box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 1), 0 0 0 1px rgba(255, 0, 168, 0.15);
+      padding: 28px 22px 26px;
+      position: relative;
+      overflow: hidden;
+      transform: translateY(-30px);
+      transition: transform 0.3s ease;
+      margin: 0;
+    }
+
+    .auth-overlay.open .auth-modal { transform: translateY(0); }
+
+    .auth-modal::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #ff00a8, #7b00ff, #00d4ff);
+    }
+
+    .auth-close {
+      position: absolute;
+      top: 14px; right: 14px;
+      width: 36px; height: 36px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #a8b0d6;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+      z-index: 2;
+    }
+
+    .auth-close:hover { background: rgba(255, 0, 168, 0.2); color: #fff; }
+
+    .auth-logo {
+      width: 54px; height: 54px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #ff00a8, #7b00ff, #00d4ff);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; color: #fff;
+      margin: 0 auto 14px;
+      box-shadow: 0 12px 30px -8px rgba(255, 0, 168, 0.7);
+    }
+
+    .auth-title {
+      font-size: 20px;
+      font-weight: 900;
+      text-align: center;
+      margin-bottom: 4px;
+      background: linear-gradient(90deg, #ff00a8, #00d4ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .auth-subtitle {
+      font-size: 12.5px;
+      color: #8895c0;
+      text-align: center;
+      margin-bottom: 18px;
+      font-weight: 500;
+    }
+
+    .auth-switch {
+      display: flex;
+      background: rgba(12, 6, 30, 0.8);
+      border-radius: 50px;
+      padding: 5px;
+      margin-bottom: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .auth-switch-btn {
+      flex: 1;
+      padding: 10px 10px;
+      border-radius: 50px;
+      border: none;
+      background: transparent;
+      color: #8895c0;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .auth-switch-btn.active {
+      background: linear-gradient(135deg, #ff00a8, #7b00ff, #00d4ff);
+      color: #fff;
+      box-shadow: 0 8px 20px -6px rgba(255, 0, 168, 0.6);
+    }
+
+    .auth-form { display: flex; flex-direction: column; gap: 12px; }
+
+    .auth-field { position: relative; }
+
+    .auth-field .field-icon {
+      position: absolute;
+      left: 15px; top: 50%;
+      transform: translateY(-50%);
+      color: #7b88b8;
+      font-size: 14px;
+      pointer-events: none;
+      transition: color 0.2s;
+    }
+
+    .auth-input {
+      width: 100%;
+      padding: 13px 15px 13px 42px;
+      border-radius: 13px;
+      background: rgba(12, 6, 30, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .auth-input::placeholder { color: #6a7aa8; }
+    .auth-input:focus {
+      border-color: rgba(255, 0, 168, 0.6);
+      box-shadow: 0 0 0 3px rgba(255, 0, 168, 0.15);
+    }
+
+    .auth-submit {
+      width: 100%;
+      padding: 14px;
+      border-radius: 50px;
+      background: linear-gradient(135deg, #ff00a8, #7b00ff, #00d4ff);
+      border: none;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 14.5px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 15px 35px -10px rgba(255, 0, 168, 0.7);
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      margin-top: 4px;
+    }
+
+    .auth-submit:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 22px 45px -8px rgba(255, 0, 168, 0.9);
+    }
+
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 16px 0 12px;
+      color: #6a7aa8;
+      font-size: 11.5px;
+      font-weight: 600;
+    }
+
+    .auth-divider::before,
+    .auth-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .social-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 9px;
+    }
+
+    .social-btn {
+      padding: 12px 6px;
+      border-radius: 13px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s;
+    }
+
+    .social-btn i { font-size: 19px; }
+
+    .social-btn.google i { color: #ea4335; }
+    .social-btn.vk i { color: #0077FF; }
+    .social-btn.tg i { color: #229ED9; }
+
+    .social-btn:hover {
+      transform: translateY(-3px);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .phone-hint {
+      font-size: 10.5px;
+      color: #6a7aa8;
+      margin-top: -6px;
+      margin-left: 4px;
+      font-weight: 500;
+    }
+
+    .auth-tab-pane { display: none; }
+    .auth-tab-pane.active { display: block; }
+
+    /* ============ ФУТЕР ============ */
+    .forum-footer {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12.5px;
+      color: #8895c0;
+      padding: 0 6px;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-weight: 500;
+    }
+
+    .online-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(46, 204, 113, 0.12);
+      padding: 6px 14px;
+      border-radius: 50px;
+      border: 0.5px solid rgba(46, 204, 113, 0.3);
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .online-indicator .dot {
+      width: 8px; height: 8px;
+      background: #2ecc71; border-radius: 50%;
+      box-shadow: 0 0 12px #2ecc71;
+    }
+
+    /* ============ МОБИЛЬНОЕ МЕНЮ ПРОФИЛЯ ============ */
+    .mobile-profile-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 2, 15, 0.7);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 500;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .mobile-profile-overlay.open { opacity: 1; visibility: visible; }
+
+    .mobile-profile-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 90%;
+      max-width: 360px;
+      background: rgba(12, 6, 30, 0.98);
+      z-index: 501;
+      padding: 18px;
+      overflow-y: auto;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      border-left: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .mobile-profile-overlay.open .mobile-profile-drawer { transform: translateX(0); }
+
+    .mobile-drawer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .mobile-drawer-title {
+      font-size: 16px;
+      font-weight: 900;
+      background: linear-gradient(90deg, #ff00a8, #00d4ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .mobile-drawer-close {
+      width: 36px; height: 36px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #a8b0d6;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* ============ АДАПТИВ ============ */
+
+    /* Планшет */
+    @media (max-width: 1100px) {
+      .layout { grid-template-columns: 1fr; gap: 16px; }
+      .profile-sidebar { display: none; }   /* Скрываем, показываем через бургер */
+      .mobile-profile-btn { display: flex; }
+      .header-actions { flex-wrap: nowrap; }
+    }
+
+    /* Мобильные */
+    @media (max-width: 700px) {
+      body { padding: 10px 10px 30px; }
+
+      .forum-header {
+        padding: 12px 14px;
+        border-radius: 20px;
+        gap: 10px;
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .logo-area { gap: 10px; }
+      .logo-icon { width: 42px; height: 42px; border-radius: 14px; }
+      .logo-icon i { font-size: 21px; }
+      .logo-text h1 { font-size: 14px; }
+      .logo-text span { font-size: 10.5px; }
+
+      .header-actions {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .nav-tabs {
+        flex: 1;
+        padding: 5px;
+        min-width: 0;
+      }
+
+      .nav-tab {
+        padding: 9px 6px;
+        font-size: 11px;
+        gap: 4px;
+      }
+
+      .nav-tab i { font-size: 11px; }
+
+      .auth-header-btn {
+        padding: 10px 14px;
+        font-size: 12px;
+      }
+
+      .auth-header-btn i { font-size: 11px; }
+
+      /* Форум-карточки */
+      .forum-card {
+        padding: 16px 14px;
+        border-radius: 20px;
+        margin-bottom: 14px;
+      }
+
+      .faction-title {
+        font-size: 15px;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      .faction-title .faction-icon {
+        width: 38px; height: 38px;
+        border-radius: 12px;
+        font-size: 17px;
+      }
+
+      .faction-title h2 { font-size: 15px; }
+      .faction-title .cat-count { font-size: 10px; padding: 4px 10px; }
+
+      .thread-item {
+        padding: 12px 14px;
+        border-radius: 14px;
+      }
+
+      .thread-info { gap: 10px; flex-basis: 100%; }
+
+      .thread-icon { width: 38px; height: 38px; border-radius: 11px; font-size: 16px; }
+
+      .thread-title { font-size: 13px; gap: 5px; }
+      .thread-meta { font-size: 10.5px; gap: 8px; }
+
+      .thread-stats {
+        width: 100%;
+        justify-content: flex-start;
+        gap: 8px;
+      }
+
+      .stat-item {
+        padding: 4px 9px;
+        font-size: 11px;
+      }
+
+      .stat-item i { font-size: 10px; }
+
+      /* Роли */
+      .roles-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; }
+      .role-card { padding: 10px 12px; border-radius: 14px; gap: 10px; }
+      .role-icon { width: 38px; height: 38px; border-radius: 12px; font-size: 17px; }
+      .role-name { font-size: 12px; }
+      .role-desc { font-size: 10px; }
+
+      .category-header h2 { font-size: 14.5px; }
+      .category-header .cat-icon { width: 34px; height: 34px; font-size: 15px; border-radius: 11px; }
+
+      /* Выдача ролей */
+      .issue-grid { grid-template-columns: 1fr; gap: 14px; }
+
+      /* Футер */
+      .forum-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        font-size: 11.5px;
+      }
+
+      /* Модальное окно авторизации на мобильных */
+      .auth-overlay {
+        align-items: flex-start;   /* ВАЖНО: прижимаем к верху */
+        padding: 0;
+      }
+
+      .auth-modal {
+        max-width: 100%;
+        width: 100%;
+        border-radius: 0 0 24px 24px;   /* Скругление только снизу */
+        padding: 24px 18px 22px;
+        max-height: none;
+        overflow-y: visible;
+        transform: translateY(-40px);
+      }
+
+      .auth-overlay.open .auth-modal { transform: translateY(0); }
+
+      .auth-logo { width: 48px; height: 48px; font-size: 22px; margin-bottom: 12px; }
+      .auth-title { font-size: 18px; }
+      .auth-subtitle { font-size: 12px; margin-bottom: 16px; }
+      .auth-switch-btn { font-size: 12.5px; padding: 9px 8px; }
+      .auth-input { padding: 12px 14px 12px 40px; font-size: 13.5px; }
+      .auth-field .field-icon { left: 14px; font-size: 13px; }
+      .auth-submit { padding: 13px; font-size: 14px; }
+      .social-btn { padding: 10px 4px; font-size: 11px; }
+      .social-btn i { font-size: 17px; }
+    }
+
+    @media (max-width: 400px) {
+      .logo-text h1 { font-size: 12.5px; }
+      .logo-text span { font-size: 10px; }
+      .nav-tab { font-size: 10px; padding: 8px 4px; }
+      .nav-tab span { display: none; }   /* Скрываем текст, оставляем иконки */
+      .nav-tab i { font-size: 13px; margin: 0; }
+      .auth-header-btn { padding: 9px 12px; font-size: 11px; }
+      .roles-grid { grid-template-columns: 1fr; }
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0a0618; }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #ff00a8, #7b00ff, #00d4ff);
+      border-radius: 10px;
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <div class="page-container">
+      <header class="forum-header">
+        <div class="logo-area">
+          <div class="logo-icon"><i class="fas fa-car"></i></div>
+          <div class="logo-text">
+            <h1>CTRP - Криминальный Симферополь</h1>
+            <span><i class="fas fa-circle"></i> GTA 5 RP · Официальный форум</span>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <nav class="nav-tabs">
+            <button class="nav-tab active" data-tab="home"><i class="fas fa-house"></i> <span>Главная</span></button>
+            <button class="nav-tab" data-tab="roles"><i class="fas fa-shield-halved"></i> <span>Роли</span></button>
+            <button class="nav-tab" data-tab="issue"><i class="fas fa-user-tag"></i> <span>Выдача</span></button>
+          </nav>
+          <button class="auth-header-btn primary" onclick="openAuth('login')"><i class="fas fa-right-to-bracket"></i> Войти</button>
+          <button class="mobile-profile-btn" onclick="openMobileProfile()"><i class="fas fa-user"></i></button>
+        </div>
+      </header>
+
+      <!-- ==================== ВКЛАДКА ГЛАВНАЯ ==================== -->
+      <div class="tab-content active" id="tab-home">
+        <div id="homeMain">
+          <div style="display:flex; justify-content:flex-end; margin-bottom: 14px;">
+            <button class="auth-header-btn" onclick="alert('✨ Создание новой темы (демо-режим)')">
+              <i class="fas fa-plus-circle"></i> Создать тему
+            </button>
+          </div>
+
+          <div class="forum-card" onclick="openSection('stateSection')" style="cursor: pointer;">
+            <div class="faction-title state">
+              <div class="faction-icon"><i class="fas fa-landmark"></i></div>
+              <h2>Государственные фракции</h2>
+              <span class="cat-count">13 подтем</span>
+            </div>
+            <p style="color: #a8b0d6; font-size: 12.5px; margin-left: 4px;">Правила и регламенты государственных структур: МВД, ФСБ, армия, суды, прокуратура и другие.</p>
+          </div>
+
+          <div class="forum-card" onclick="openSection('crimeSection')" style="cursor: pointer;">
+            <div class="faction-title crime">
+              <div class="faction-icon"><i class="fas fa-skull-crossbones"></i></div>
+              <h2>Криминальные фракции</h2>
+              <span class="cat-count">4 подтемы</span>
+            </div>
+            <p style="color: #a8b0d6; font-size: 12.5px; margin-left: 4px;">Правила и иерархия криминальных группировок: «Черный квартал», «Ночные волки», «Северные», «Волжские».</p>
+          </div>
+
+          <div class="forum-card" onclick="openSection('lawSection')" style="cursor: pointer;">
+            <div class="faction-title law">
+              <div class="faction-icon"><i class="fas fa-book"></i></div>
+              <h2>Общее законодательство</h2>
+              <span class="cat-count">3 подтемы</span>
+            </div>
+            <p style="color: #a8b0d6; font-size: 12.5px; margin-left: 4px;">Уголовный, Административный и Процессуальный кодексы, а также общие правовые нормы штата.</p>
+          </div>
+        </div>
+
+        <div id="stateSection" class="hidden">
+          <button class="auth-header-btn" onclick="closeSection('stateSection')" style="margin-bottom: 14px;"><i class="fas fa-arrow-left"></i> Назад к темам</button>
+          <div class="forum-card">
+            <div class="faction-title state">
+              <div class="faction-icon"><i class="fas fa-landmark"></i></div>
+              <h2>Государственные фракции</h2>
+              <span class="cat-count">13 подтем</span>
+            </div>
+            <div class="thread-list">
+              <a class="thread-item" href="#"><div class="thread-info"><div class="thread-icon icon-ugibdd"><i class="fas fa-car-side"></i></div><div class="thread-text"><div class="thread-title"><span>Правила УГИБДД</span><span class="badge blue">Важно</span></div><div class="thread-meta"><span><i class="fas fa-user"></i> Admin_State</span><span><i class="fas fa-clock"></i> 2 часа назад</span></div></div></div><div class="thread-stats"><div class="stat-item"><i class="fas fa-eye"></i> 1.2k</div><div class="stat-item"><i class="fas fa-comment"></i> 45</div></div></a>
+              <a class="thread-item" href="#"><div class="thread-info"><div class="thread-icon icon-uvd"><i class="fas fa-shield-halved"></i></div><div class="thread-text"><div class="thread-title"><span>Правила УВД по ЦАО</span><span class="badge blue">Важно</span></div><div class="thread-meta"><span><i class="fas fa-user"></i> Admin_State</span><span><i class="fas fa-clock"></i> 3 часа назад</span></div></div></div><div class="thread-stats"><div class="stat-item"><i class="fas fa-eye"></i> 980</div><div class="stat-item"><i class="fas fa-comment"></i> 32</div></div></a>
+              <a class="thread-item" href="#"><div class="thread-info"><div class="thread-icon icon-military"><i class="fas fa-fighter-jet"></i></div><div class="thread-text"><div class="thread-title"><span>Правила Вооруженных Сил</span></div><div class="thread-meta"><span><i class="fas fa-user"></i> General_RF</span><span><i class="fas fa-clock"></i> 5 часов назад</span></div></div></div><div class="thread-stats"><div class="stat-item"><i class="fas fa-eye"></i> 760</div><div class="stat-item"><i class="fas fa-comment"></i> 28</div></div></a>
+              <a class="thread-item" href="#"><div class="thread-info"><div class="thread-icon icon-fsin"><i class="fas fa-handcuffs"></i></div><div class="thread-text"><div class="thread-title"><span>Правила ФСИН</span></div><div class="thread-meta"><span><i class="fas fa-user"></i> FSIN_Chief</span><span><i class="fas fa-clock"></i> 7 часов назад</span></div></div></div><div class="thread-stats"><div class="stat-item"><i class="fas fa-eye"></i> 654</div><div class="stat-item"><i class="fas fa-comment"></i> 21</div></div></a>
+              <a class="thread-item" href="#"><div class="thread-info"><div class="thread-icon icon-cgb"><i class="fas fa-briefcase-medical"></i></div><div class="thread-text"><div class="thread-title"><span>Правила ЦГБ</span></div><div class="thread-meta"><span><i class="fas fa-user"></i> CGB_Head</span><span><i class="fas fa-clock"></i> 9 часов назад</span></div></div></div><div class="thread-stats"><div class="stat-item"><i class="fas fa-eye"></i> 543</div><div class="stat-item"><i class="fas fa-comment"></i> 18</div></div></a>
+              <a class="thread-item" href="#"><div class="thread-info"><div class="thread-icon icon-moscow"><i class="fas fa-tv"></i></div><div class="thread-text"><div class="thread-title"><span>Правила Москва Live</span></div><div class="thread-meta"><span><i class="fas fa-user"></i> MoscowLive</span><span><i class="fas fa-clock"></i> 12 часов назад</span></div></div></div><div class="thread-stats"><div class="stat-item"><i class="fas fa-eye"></i> 1.5k</div><div class="stat-item"><i class="fas fa-comment"></i> 67</div></div></a>
+              <a class="thread-item" href="#"><div class="thread-info"><div class="thread-icon icon-gov"><i class="fas fa-building-columns"></i></div><div class="thread-text"><div class="thread-title"><span>Правила Правительства</span><span class="badge gold">Официально</span></div><div class="thread-meta"><span><i class="fas fa-user"></i> Government</span><span><i class="fas fa-clock"></i> 1 день назад</span></div></div></div><div class="thread-stats"><div class="stat-item"><i class="fas fa-eye"></i> 2.1k</div><div class="stat-item"><i class="fas fa-comment"></i> 89</div></div></a>
+              <a class="thread-item" href="#"><div class="thread-info"><div class="thread-icon icon-court"><i class="fas fa-scale-balanced"></i></div><div class="thread-text"><div class="thread-title"><span>Правила Судебной власти</span></div><div class="thread-meta"><span><i class="fas fa-user"></i> Judge_RF</span><span><i class="fas fa-clock"></i> 1 день назад</span></div></div></div><div class="thread-stats"><div class="stat-item"><i class="fas fa-eye"></i> 890</div><div class="stat-item"><i class="fas fa-comment"></i> 34</div></div></a>
+              <a class="thread-item" href="#"><div class="thread-info"><div class="thread-icon icon-sk"><i class="fas fa-file-shield"></i></div><div class="thread-text"><div class="thread-title"><span>Правила СК</span></div><div class="thread-meta"><span><i class="fas fa-user"></i> SK_Head</span><span><i class="fas fa-clock"></i> 2 дня назад</span></div></div></div><div class="thread-stats"><div class="stat-item"><i class="fas fa-eye"></i> 720</div><div class="stat-item"><i class="fas fa-comment"></i> 26</div></div></a>
+              <a class="thread-item" href="#"><div class="thread-info"><div class="thread-icon icon-prokuratura"><i class="fas fa-gavel"></i></div><div class="thread-text"><div class="thread-title"><span>Правила Прокуратуры</span></div><div class="thread-meta"><span><i class="fas fa-user"></i> Prokuror_RF</span><span><i class="fas fa-clock"></i> 2 дня назад</span></div></div></div><div class="thread-stats"><div class="stat-item"><i class="fas fa-eye"></i> 645</div><div class="stat-item"><i class="fas fa-comment"></i> 22</div></div></a>
+              <a class="thread-item" href="#"><div class="thread-info"><div class="thread-icon icon-fsb"><i class="fas fa-user-secret"></i></div><div class="thread-text"><div class="thread-title"><span>Правила ФСБ</span><span class="badge">Секретно</span></div><div class="thread-meta"><span><i class="fas fa-user"></i> FSB_Director</span><span><i class="fas fa-clock"></i> 3 дня назад</span></div></div></div><div class="thread-stats"><div class="stat-item"><i class="fas fa-eye"></i> 1.8k</div><div class="stat-item"><i class="fas fa-comment"></i> 71</div></div></a>
+              <a class="thread-item" href="#"><div class="thread-info"><div class="thread-icon icon-fso"><i class="fas fa-user-shield"></i></div><div class="thread-text"><div class="thread-title"><span>Правила ФСО</span></div><div class="thread-meta"><span><i class="fas fa-user"></i> FSO_Chief</span><span><i class="fas fa-clock"></i> 3 дня назад</span></div></div></div><div class="thread-stats"><div class="stat-item"><i class="fas fa-eye"></i> 512</div><div class="stat-item"><i class="fas fa-comment"></i> 16</div></div></a>
+              <a class="thread-item" href="#"><div class="thread-info"><div class="thread-icon icon-rosgvardia"><i class="fas fa-shield"></i></div><div class="thread-text"><div class="thread-title"><span>Правила Росгвардия</span></div><div class="thread-meta"><span><i class="fas fa-user"></i> Rosgvardia</span><span><i class="fas fa-clock"></i> 4 дня назад</span></div></div></div><div class="thread-stats"><div class="stat-item"><i class="fas fa-eye"></i> 689</div><div class="stat-item"><i class="fas fa-comment"></i> 24</div></div></a>
+            </div>
+          </div>
+        </div>
+
+        <div id="crimeSection" class="hidden">
+          <button class="auth-header-btn" onclick="closeSection('crimeSection')" style="margin-bottom: 14px;"><i class="fas fa-arrow-left"></i> Назад к темам</button>
+          <div class="forum-card">
+            <div class="faction-title crime">
+              <div class="faction-icon"><i class="fas fa-skull-crossbones"></i></div>
+              <h2>Криминальные фракции</h2>
+              <span class="cat-count">4 подтемы</span>
+            </div>
+            <div class="thread-list">
+              <a class="thread-item" href="#"><div class="thread-info"><div class="thread-icon icon-black-quarter"><i class="fas fa-mask"></i></div><div class="thread-text"><div class="thread-title"><span>Правила "Черный квартал"</span><span class="badge">Важно</span></div><div class="thread-meta"><span><i class="fas fa-user"></i> BlackQuarter</span><span><i class="fas fa-clock"></i> 4 часа назад</span></div></div></div><div class="thread-stats"><div class="stat-item"><i class="fas fa-eye"></i> 1.1k</div><div class="stat-item"><i class="fas fa-comment"></i> 48</div></div></a>
+              <a class="thread-item" href="#"><div class="thread-info"><div class="thread-icon icon-night-wolves"><i class="fas fa-motorcycle"></i></div><div class="thread-text"><div class="thread-title"><span>Правила "Ночных волков"</span><span class="badge">Важно</span></div><div class="thread-meta"><span><i class="fas fa-user"></i> NightWolves</span><span><i class="fas fa-clock"></i> 6 часов назад</span></div></div></div><div class="thread-stats"><div class="stat-item"><i class="fas fa-eye"></i> 890</div><div class="stat-item"><i class="fas fa-comment"></i> 36</div></div></a>
+              <a class="thread-item" href="#"><div class="thread-info"><div class="thread-icon icon-northern"><i class="fas fa-snowflake"></i></div><div class="thread-text"><div class="thread-title"><span>Правила "Северные"</span></div><div class="thread-meta"><span><i class="fas fa-user"></i> Northern</span><span><i class="fas fa-clock"></i> 8 часов назад</span></div></div></div><div class="thread-stats"><div class="stat-item"><i class="fas fa-eye"></i> 654</div><div class="stat-item"><i class="fas fa-comment"></i> 25</div></div></a>
+              <a class="thread-item" href="#"><div class="thread-info"><div class="thread-icon icon-volzhskie"><i class="fas fa-water"></i></div><div class="thread-text"><div class="thread-title"><span>Правила "Волжские"</span></div><div class="thread-meta"><span><i class="fas fa-user"></i> Volzhskie</span><span><i class="fas fa-clock"></i> 10 часов назад</span></div></div></div><div class="thread-stats"><div class="stat-item"><i class="fas fa-eye"></i> 432</div><div class="stat-item"><i class="fas fa-comment"></i> 17</div></div></a>
+            </div>
+          </div>
+        </div>
+
+        <div id="lawSection" class="hidden">
+          <button class="auth-header-btn" onclick="closeSection('lawSection')" style="margin-bottom: 14px;"><i class="fas fa-arrow-left"></i> Назад к темам</button>
+          <div class="forum-card">
+            <div class="faction-title law">
+              <div class="faction-icon"><i class="fas fa-book"></i></div>
+              <h2>Общее законодательство</h2>
+              <span class="cat-count">3 подтемы</span>
+            </div>
+            <div class="thread-list">
+              <a class="thread-item" href="#"><div class="thread-info"><div class="thread-icon icon-criminal-code"><i class="fas fa-gavel"></i></div><div class="thread-text"><div class="thread-title"><span>Уголовный кодекс</span><span class="badge" style="background: linear-gradient(135deg, #8b0000, #ff4500);">Важно</span></div><div class="thread-meta"><span><i class="fas fa-user"></i> Legal_Dept</span><span><i class="fas fa-clock"></i> 1 день назад</span></div></div></div><div class="thread-stats"><div class="stat-item"><i class="fas fa-eye"></i> 3.2k</div><div class="stat-item"><i class="fas fa-comment"></i> 112</div></div></a>
+              <a class="thread-item" href="#"><div class="thread-info"><div class="thread-icon icon-admin-code"><i class="fas fa-clipboard-list"></i></div><div class="thread-text"><div class="thread-title"><span>Административный кодекс</span><span class="badge blue">Важно</span></div><div class="thread-meta"><span><i class="fas fa-user"></i> Legal_Dept</span><span><i class="fas fa-clock"></i> 2 дня назад</span></div></div></div><div class="thread-stats"><div class="stat-item"><i class="fas fa-eye"></i> 2.7k</div><div class="stat-item"><i class="fas fa-comment"></i> 88</div></div></a>
+              <a class="thread-item" href="#"><div class="thread-info"><div class="thread-icon icon-procedural-code"><i class="fas fa-file-contract"></i></div><div class="thread-text"><div class="thread-title"><span>Процессуальный кодекс</span><span class="badge" style="background: linear-gradient(135deg, #4c1d95, #8b5cf6);">Важно</span></div><div class="thread-meta"><span><i class="fas fa-user"></i> Legal_Dept</span><span><i class="fas fa-clock"></i> 3 дня назад</span></div></div></div><div class="thread-stats"><div class="stat-item"><i class="fas fa-eye"></i> 2.1k</div><div class="stat-item"><i class="fas fa-comment"></i> 64</div></div></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== ВКЛАДКА РОЛИ ==================== -->
+      <div class="tab-content" id="tab-roles">
+        <div class="search-wrapper">
+          <i class="fas fa-search"></i>
+          <input type="text" class="search-input" id="roleSearch" placeholder="Поиск роли...">
+        </div>
+
+        <section class="category-section cat-founders">
+          <div class="category-header"><div class="cat-icon"><i class="fas fa-crown"></i></div><h2>Основатели и Руководство</h2><span class="cat-count">5 ролей</span></div>
+          <div class="roles-grid">
+            <div class="role-card role-founder" data-role="Основатель"><div class="role-icon"><i class="fas fa-crown"></i></div><div class="role-info"><span class="role-name">Основатель</span><span class="role-desc">Создатель проекта</span></div></div>
+            <div class="role-card role-chief-admin" data-role="Руководство Проекта"><div class="role-icon"><i class="fas fa-sitemap"></i></div><div class="role-info"><span class="role-name">Руководство Проекта</span><span class="role-desc">Высшее руководство</span></div></div>
+            <div class="role-card role-admin-l5" data-role="Команда Проекта"><div class="role-icon"><i class="fas fa-users-gear"></i></div><div class="role-info"><span class="role-name">Команда Проекта</span><span class="role-desc">Ядро команды</span></div></div>
+            <div class="role-card role-admin-l4" data-role="Руководящий состав CTRP"><div class="role-icon"><i class="fas fa-star-of-life"></i></div><div class="role-info"><span class="role-name">Руководящий состав CTRP</span><span class="role-desc">CTRP руководство</span></div></div>
+            <div class="role-card role-admin-l3" data-role="Руководящий состав администрации"><div class="role-icon"><i class="fas fa-user-tie"></i></div><div class="role-info"><span class="role-name">Руководящий состав администрации</span><span class="role-desc">Топ администрации</span></div></div>
+          </div>
+        </section>
+
+        <section class="category-section cat-leadership">
+          <div class="category-header"><div class="cat-icon"><i class="fas fa-shield-halved"></i></div><h2>Главная Администрация</h2><span class="cat-count">8 ролей</span></div>
+          <div class="roles-grid">
+            <div class="role-card role-chief-admin" data-role="Главный Администратор"><div class="role-icon"><i class="fas fa-shield-halved"></i></div><div class="role-info"><span class="role-name">Главный Администратор</span><span class="role-desc">Глава администрации</span></div></div>
+            <div class="role-card role-chief-admin" data-role="Заместитель главного администратора"><div class="role-icon"><i class="fas fa-shield"></i></div><div class="role-info"><span class="role-name">Заместитель главного администратора</span><span class="role-desc">Правая рука главы</span></div></div>
+            <div class="role-card role-chief-admin" data-role="Главный технический администратор"><div class="role-icon"><i class="fas fa-microchip"></i></div><div class="role-info"><span class="role-name">Главный технический администратор</span><span class="role-desc">Технический директор</span></div></div>
+            <div class="role-card role-mod" data-role="Главный модератор"><div class="role-icon"><i class="fas fa-gavel"></i></div><div class="role-info"><span class="role-name">Главный модератор</span><span class="role-desc">Глава модерации</span></div></div>
+            <div class="role-card role-chief-admin" data-role="Главный администратор форума"><div class="role-icon"><i class="fas fa-comments"></i></div><div class="role-info"><span class="role-name">Главный администратор форума</span><span class="role-desc">Глава форума</span></div></div>
+            <div class="role-card role-chief-admin" data-role="Главный администратор семей"><div class="role-icon"><i class="fas fa-people-roof"></i></div><div class="role-info"><span class="role-name">Главный администратор семей</span><span class="role-desc">Глава семей</span></div></div>
+            <div class="role-card role-chief-admin" data-role="Заместитель главного администратора семей"><div class="role-icon"><i class="fas fa-house-chimney-user"></i></div><div class="role-info"><span class="role-name">Заместитель главного администратора семей</span><span class="role-desc">Зам. главы семей</span></div></div>
+            <div class="role-card role-chief-admin" data-role="Старший Администратор Форума"><div class="role-icon"><i class="fas fa-user-shield"></i></div><div class="role-info"><span class="role-name">Старший Администратор Форума</span><span class="role-desc">Опытный админ</span></div></div>
+          </div>
+        </section>
+
+        <section class="category-section cat-admins">
+          <div class="category-header"><div class="cat-icon"><i class="fas fa-user-tie"></i></div><h2>Администраторы</h2><span class="cat-count">9 ролей</span></div>
+          <div class="roles-grid">
+            <div class="role-card role-admin-l5" data-role="Админ 5-го уровня"><div class="role-icon"><i class="fas fa-star"></i></div><div class="role-info"><span class="role-name">Админ 5-го уровня</span><span class="role-desc">Максимальный уровень</span></div></div>
+            <div class="role-card role-admin-l4" data-role="Админ 4-го уровня"><div class="role-icon"><i class="fas fa-star-half-stroke"></i></div><div class="role-info"><span class="role-name">Админ 4-го уровня</span><span class="role-desc">Высокий уровень</span></div></div>
+            <div class="role-card role-admin-l3" data-role="Админ 3-го уровня"><div class="role-icon"><i class="fas fa-star-of-david"></i></div><div class="role-info"><span class="role-name">Админ 3-го уровня</span><span class="role-desc">Средний уровень</span></div></div>
+            <div class="role-card role-admin-l2" data-role="Админ 2-го уровня"><div class="role-icon"><i class="fas fa-certificate"></i></div><div class="role-info"><span class="role-name">Админ 2-го уровня</span><span class="role-desc">Базовый уровень</span></div></div>
+            <div class="role-card role-admin-l1" data-role="Админ 1-го уровня"><div class="role-icon"><i class="fas fa-medal"></i></div><div class="role-info"><span class="role-name">Админ 1-го уровня</span><span class="role-desc">Начальный уровень</span></div></div>
+            <div class="role-card role-admin-l1" data-role="RP Администратор"><div class="role-icon"><i class="fas fa-mask"></i></div><div class="role-info"><span class="role-name">RP Администратор</span><span class="role-desc">Ролевой контроль</span></div></div>
+            <div class="role-card role-tech-support" data-role="Технический администратор"><div class="role-icon"><i class="fas fa-wrench"></i></div><div class="role-info"><span class="role-name">Технический администратор</span><span class="role-desc">Техподдержка</span></div></div>
+            <div class="role-card role-tech-support" data-role="Техническая поддержка"><div class="role-icon"><i class="fas fa-screwdriver-wrench"></i></div><div class="role-info"><span class="role-name">Техническая поддержка</span><span class="role-desc">Помощь игрокам</span></div></div>
+            <div class="role-card role-hr-admin" data-role="HR Администрация"><div class="role-icon"><i class="fas fa-user-group"></i></div><div class="role-info"><span class="role-name">HR Администрация</span><span class="role-desc">Кадровый отдел</span></div></div>
+          </div>
+        </section>
+
+        <section class="category-section cat-moderators">
+          <div class="category-header"><div class="cat-icon"><i class="fas fa-gavel"></i></div><h2>Модерация</h2><span class="cat-count">7 ролей</span></div>
+          <div class="roles-grid">
+            <div class="role-card role-mod" data-role="Модератор"><div class="role-icon"><i class="fas fa-gavel"></i></div><div class="role-info"><span class="role-name">Модератор</span><span class="role-desc">Порядок на форуме</span></div></div>
+            <div class="role-card role-mod-discord" data-role="Модератор Discord"><div class="role-icon"><i class="fab fa-discord"></i></div><div class="role-info"><span class="role-name">Модератор Discord</span><span class="role-desc">Порядок в Discord</span></div></div>
+            <div class="role-card role-mod-vk" data-role="Модератор ВКонтакте"><div class="role-icon"><i class="fab fa-vk"></i></div><div class="role-info"><span class="role-name">Модератор ВКонтакте</span><span class="role-desc">Порядок в VK</span></div></div>
+            <div class="role-card role-mod-tg" data-role="Модератор Telegram"><div class="role-icon"><i class="fab fa-telegram"></i></div><div class="role-info"><span class="role-name">Модератор Telegram</span><span class="role-desc">Порядок в Telegram</span></div></div>
+            <div class="role-card role-mod" data-role="Администрация Семей"><div class="role-icon"><i class="fas fa-people-roof"></i></div><div class="role-info"><span class="role-name">Администрация Семей</span><span class="role-desc">Контроль семей</span></div></div>
+            <div class="role-card role-curator-state" data-role="Куратор младшей администрации"><div class="role-icon"><i class="fas fa-user-graduate"></i></div><div class="role-info"><span class="role-name">Куратор младшей администрации</span><span class="role-desc">Наставник младших</span></div></div>
+            <div class="role-card role-curator-state" data-role="Главный куратор младшей администрации"><div class="role-icon"><i class="fas fa-graduation-cap"></i></div><div class="role-info"><span class="role-name">Главный куратор младшей администрации</span><span class="role-desc">Глава кураторов</span></div></div>
+          </div>
+        </section>
+
+        <section class="category-section cat-media">
+          <div class="category-header"><div class="cat-icon"><i class="fas fa-photo-film"></i></div><h2>Медиа Администрация</h2><span class="cat-count">10 ролей</span></div>
+          <div class="roles-grid">
+            <div class="role-card role-media-chief" data-role="Главный Медиа-Администратор"><div class="role-icon"><i class="fas fa-video"></i></div><div class="role-info"><span class="role-name">Главный Медиа-Администратор</span><span class="role-desc">Глава медиа</span></div></div>
+            <div class="role-card role-media-chief" data-role="Заместитель главного медиа-администратора"><div class="role-icon"><i class="fas fa-film"></i></div><div class="role-info"><span class="role-name">Заместитель главного медиа-администратора</span><span class="role-desc">Зам. главы медиа</span></div></div>
+            <div class="role-card role-media-chief" data-role="Старший медиа-администратор"><div class="role-icon"><i class="fas fa-camera-retro"></i></div><div class="role-info"><span class="role-name">Старший медиа-администратор</span><span class="role-desc">Опытный медиа</span></div></div>
+            <div class="role-card role-media-chief" data-role="Медиа Администрация"><div class="role-icon"><i class="fas fa-photo-film"></i></div><div class="role-info"><span class="role-name">Медиа Администрация</span><span class="role-desc">Медиа-команда</span></div></div>
+            <div class="role-card role-media-chief" data-role="Медиа Модератор"><div class="role-icon"><i class="fas fa-images"></i></div><div class="role-info"><span class="role-name">Медиа Модератор</span><span class="role-desc">Модерация медиа</span></div></div>
+            <div class="role-card role-media-chief" data-role="Head PR Менеджер"><div class="role-icon"><i class="fas fa-bullhorn"></i></div><div class="role-info"><span class="role-name">Head PR Менеджер</span><span class="role-desc">Глава PR</span></div></div>
+            <div class="role-card role-media-chief" data-role="Администратор Социальных сетей"><div class="role-icon"><i class="fas fa-hashtag"></i></div><div class="role-info"><span class="role-name">Администратор Социальных сетей</span><span class="role-desc">Соцсети проекта</span></div></div>
+            <div class="role-card role-media-chief" data-role="Главный медиа-администратор"><div class="role-icon"><i class="fas fa-star"></i></div><div class="role-info"><span class="role-name">Главный медиа-администратор</span><span class="role-desc">Топ медиа</span></div></div>
+            <div class="role-card role-media-chief" data-role="Заместитель главного медиа-администратора"><div class="role-icon"><i class="fas fa-star-half-stroke"></i></div><div class="role-info"><span class="role-name">Заместитель главного медиа-администратора</span><span class="role-desc">Зам. топ медиа</span></div></div>
+            <div class="role-card role-media-chief" data-role="Главный PR Менеджер"><div class="role-icon"><i class="fas fa-tower-broadcast"></i></div><div class="role-info"><span class="role-name">Главный PR Менеджер</span><span class="role-desc">PR-директор</span></div></div>
+          </div>
+        </section>
+
+        <section class="category-section cat-curators">
+          <div class="category-header"><div class="cat-icon"><i class="fas fa-diagram-project"></i></div><h2>Кураторы</h2><span class="cat-count">8 ролей</span></div>
+          <div class="roles-grid">
+            <div class="role-card role-curator-state" data-role="Главный куратор Радио"><div class="role-icon"><i class="fas fa-radio"></i></div><div class="role-info"><span class="role-name">Главный куратор Радио</span><span class="role-desc">Глава радио</span></div></div>
+            <div class="role-card role-curator-state" data-role="Главный куратор государственных организаций"><div class="role-icon"><i class="fas fa-landmark"></i></div><div class="role-info"><span class="role-name">Главный куратор государственных организаций</span><span class="role-desc">Глава гос. кураторов</span></div></div>
+            <div class="role-card role-curator-crime" data-role="Главный куратор криминальных организаций"><div class="role-icon"><i class="fas fa-skull"></i></div><div class="role-info"><span class="role-name">Главный куратор криминальных организаций</span><span class="role-desc">Глава крим. кураторов</span></div></div>
+            <div class="role-card role-curator-state" data-role="Куратор государственных организаций"><div class="role-icon"><i class="fas fa-building-columns"></i></div><div class="role-info"><span class="role-name">Куратор государственных организаций</span><span class="role-desc">Контроль гос. орг.</span></div></div>
+            <div class="role-card role-curator-crime" data-role="Куратор криминальных организаций"><div class="role-icon"><i class="fas fa-mask"></i></div><div class="role-info"><span class="role-name">Куратор криминальных организаций</span><span class="role-desc">Контроль крим. орг.</span></div></div>
+            <div class="role-card role-curator-state" data-role="Главный куратор младшей администрации"><div class="role-icon"><i class="fas fa-graduation-cap"></i></div><div class="role-info"><span class="role-name">Главный куратор младшей администрации</span><span class="role-desc">Глава младших кураторов</span></div></div>
+            <div class="role-card role-curator-state" data-role="Куратор младшей администрации"><div class="role-icon"><i class="fas fa-user-graduate"></i></div><div class="role-info"><span class="role-name">Куратор младшей администрации</span><span class="role-desc">Наставник младших</span></div></div>
+            <div class="role-card role-curator-state" data-role="Старший куратор Радио"><div class="role-icon"><i class="fas fa-broadcast-tower"></i></div><div class="role-info"><span class="role-name">Старший куратор Радио</span><span class="role-desc">Опытный куратор радио</span></div></div>
+          </div>
+        </section>
+
+        <section class="category-section cat-tech">
+          <div class="category-header"><div class="cat-icon"><i class="fas fa-microchip"></i></div><h2>Техническая команда</h2><span class="cat-count">3 роли</span></div>
+          <div class="roles-grid">
+            <div class="role-card role-tech-support" data-role="Техническая поддержка"><div class="role-icon"><i class="fas fa-screwdriver-wrench"></i></div><div class="role-info"><span class="role-name">Техническая поддержка</span><span class="role-desc">Помощь игрокам</span></div></div>
+            <div class="role-card role-tech-support" data-role="Технический администратор"><div class="role-icon"><i class="fas fa-wrench"></i></div><div class="role-info"><span class="role-name">Технический администратор</span><span class="role-desc">Техподдержка</span></div></div>
+            <div class="role-card role-tech-support" data-role="Главный технический администратор"><div class="role-icon"><i class="fas fa-microchip"></i></div><div class="role-info"><span class="role-name">Главный технический администратор</span><span class="role-desc">Технический директор</span></div></div>
+          </div>
+        </section>
+
+        <section class="category-section cat-hr">
+          <div class="category-header"><div class="cat-icon"><i class="fas fa-user-group"></i></div><h2>HR-Команда</h2><span class="cat-count">1 роль</span></div>
+          <div class="roles-grid">
+            <div class="role-card role-hr-admin" data-role="HR Администрация"><div class="role-icon"><i class="fas fa-user-group"></i></div><div class="role-info"><span class="role-name">HR Администрация</span><span class="role-desc">Кадровый отдел</span></div></div>
+          </div>
+        </section>
+      </div>
+
+      <!-- ==================== ВКЛАДКА ВЫДАЧА РОЛЕЙ ==================== -->
+      <div class="tab-content" id="tab-issue">
+        <div class="issue-grid">
+          <div class="forum-card" style="padding: 20px;">
+            <h3 style="font-size: 15px; font-weight: 900; margin-bottom: 14px; background: linear-gradient(90deg, #ff00a8, #00d4ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"><i class="fas fa-user-tag" style="color:#ff00a8; -webkit-text-fill-color:#ff00a8;"></i> Выдача роли</h3>
+            <div style="margin-bottom: 12px;">
+              <label style="display:block; font-size:12px; font-weight:700; color:#b0bce0; margin-bottom:6px;">Никнейм</label>
+              <input type="text" id="userName" class="auth-input" style="padding-left:14px;" placeholder="Vito_Corleone" value="Vito_Corleone">
+            </div>
+            <div style="margin-bottom: 12px;">
+              <label style="display:block; font-size:12px; font-weight:700; color:#b0bce0; margin-bottom:6px;">Роль</label>
+              <select id="roleSelect" class="auth-input" style="padding-left:14px; cursor:pointer;">
+                <option value="Основатель">Основатель</option>
+                <option value="Главный Администратор">Главный Администратор</option>
+                <option value="Админ 5-го уровня">Админ 5-го уровня</option>
+                <option value="Модератор" selected>Модератор</option>
+                <option value="VIP">VIP</option>
+                <option value="Игрок">Игрок</option>
+              </select>
+            </div>
+            <div style="margin-bottom: 12px;">
+              <label style="display:block; font-size:12px; font-weight:700; color:#b0bce0; margin-bottom:6px;">Комментарий</label>
+              <input type="text" id="commentText" class="auth-input" style="padding-left:14px;" placeholder="За активную работу..." value="За активную работу на форуме">
+            </div>
+            <button id="previewBtn" class="auth-submit"><i class="fas fa-eye"></i> Показать превью</button>
+          </div>
+          <div class="forum-card" style="padding: 20px;">
+            <h3 style="font-size: 15px; font-weight: 900; margin-bottom: 14px; background: linear-gradient(90deg, #00d4ff, #7b00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"><i class="fas fa-desktop" style="color:#00d4ff; -webkit-text-fill-color:#00d4ff;"></i> Превью</h3>
+            <div id="previewArea">
+              <div style="text-align:center; padding: 30px 16px; color:#6a7aa8;">
+                <i class="fas fa-user-tag" style="font-size:36px; margin-bottom:10px; opacity:0.4;"></i>
+                <p style="font-size:12.5px;">Настройте параметры слева и нажмите «Показать превью»</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer class="forum-footer">
+        <div class="online-indicator"><span class="dot"></span> 248 игроков онлайн</div>
+        <div>CTRP - Криминальный Симферополь © 2025</div>
+      </footer>
+    </div>
+
+    <!-- ПРАВАЯ ПАНЕЛЬ: ПРОФИЛЬ (десктоп) -->
+    <aside class="profile-sidebar">
+      <div class="profile-card" id="profileAuthCard" style="display:none;">
+        <div class="profile-header">
+          <div class="profile-avatar-lg" id="profileAvatar">
+            V
+            <span class="status-dot"></span>
+          </div>
+          <div class="profile-header-info">
+            <div class="profile-fullname" id="profileFullName">Вито Корлеоне</div>
+            <div class="profile-username" id="profileUsername">@vito_corleone</div>
+            <span class="profile-role-badge" id="profileRoleBadge"><i class="fas fa-gavel"></i> Модератор</span>
+          </div>
+        </div>
+
+        <div class="profile-stats">
+          <div class="profile-stat"><div class="num">128</div><div class="lbl">Сообщений</div></div>
+          <div class="profile-stat"><div class="num">4.2k</div><div class="lbl">Репутация</div></div>
+          <div class="profile-stat"><div class="num">14</div><div class="lbl">Дней</div></div>
+        </div>
+
+        <div class="profile-actions">
+          <button class="profile-btn" onclick="alert('Открытие профиля (демо)')"><i class="fas fa-user"></i> Мой профиль</button>
+          <button class="profile-btn" onclick="alert('Настройки (демо)')"><i class="fas fa-gear"></i> Настройки</button>
+          <button class="profile-btn danger" onclick="logoutUser()"><i class="fas fa-right-from-bracket"></i> Выйти</button>
+        </div>
+      </div>
+
+      <div class="profile-card" id="profileGuestCard">
+        <div class="profile-guest">
+          <div class="guest-icon"><i class="fas fa-user"></i></div>
+          <h4>Вы не авторизованы</h4>
+          <p>Войдите или создайте аккаунт, чтобы получить доступ ко всем функциям форума.</p>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <button class="auth-header-btn primary" onclick="openAuth('login')" style="justify-content:center;"><i class="fas fa-right-to-bracket"></i> Войти</button>
+            <button class="auth-header-btn" onclick="openAuth('register')" style="justify-content:center;"><i class="fas fa-user-plus"></i> Регистрация</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-card">
+        <div style="font-size:12.5px; font-weight:800; color:#fff; margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+          <i class="fas fa-circle-info" style="color:#00d4ff;"></i> О проекте
+        </div>
+        <p style="font-size:12px; color:#8895c0; line-height:1.6;">
+          CTRP — криминальный ролевой проект в GTA 5. Играй, развивайся, строй карьеру в государственных структурах или стань легендой криминального мира.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+  <!-- МОБИЛЬНОЕ МЕНЮ ПРОФИЛЯ -->
+  <div class="mobile-profile-overlay" id="mobileProfileOverlay" onclick="closeMobileProfile(event)">
+    <div class="mobile-profile-drawer" onclick="event.stopPropagation()">
+      <div class="mobile-drawer-header">
+        <div class="mobile-drawer-title">Профиль</div>
+        <button class="mobile-drawer-close" onclick="closeMobileProfile()"><i class="fas fa-xmark"></i></button>
+      </div>
+
+      <div id="mobileProfileContent">
+        <!-- Контент будет скопирован из правой панели -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ ==================== -->
+  <div class="auth-overlay" id="authOverlay">
+    <div class="auth-modal">
+      <button class="auth-close" onclick="closeAuth()"><i class="fas fa-xmark"></i></button>
+
+      <div class="auth-logo"><i class="fas fa-car"></i></div>
+      <h2 class="auth-title">Добро пожаловать</h2>
+      <p class="auth-subtitle">Войдите или создайте аккаунт CTRP</p>
+
+      <div class="auth-switch">
+        <button class="auth-switch-btn active" id="tabLoginBtn" onclick="switchAuthTab('login')">Вход</button>
+        <button class="auth-switch-btn" id="tabRegisterBtn" onclick="switchAuthTab('register')">Регистрация</button>
+      </div>
+
+      <div class="auth-tab-pane active" id="paneLogin">
+        <form class="auth-form" onsubmit="handleLogin(event)">
+          <div class="auth-field">
+            <input type="email" class="auth-input" id="loginEmail" placeholder="Email или телефон" required>
+            <i class="fas fa-envelope field-icon"></i>
+          </div>
+          <div class="auth-field">
+            <input type="password" class="auth-input" id="loginPassword" placeholder="Пароль" required>
+            <i class="fas fa-lock field-icon"></i>
+          </div>
+          <button type="submit" class="auth-submit"><i class="fas fa-right-to-bracket"></i> Войти</button>
+        </form>
+      </div>
+
+      <div class="auth-tab-pane" id="paneRegister">
+        <form class="auth-form" onsubmit="handleRegister(event)">
+          <div class="auth-field">
+            <input type="text" class="auth-input" id="regFullName" placeholder="Имя и Фамилия" required>
+            <i class="fas fa-user field-icon"></i>
+          </div>
+          <div class="auth-field">
+            <input type="text" class="auth-input" id="regUsername" placeholder="Никнейм (латиница)" required>
+            <i class="fas fa-at field-icon"></i>
+          </div>
+          <div class="auth-field">
+            <input type="email" class="auth-input" id="regEmail" placeholder="Email" required>
+            <i class="fas fa-envelope field-icon"></i>
+          </div>
+          <div class="auth-field">
+            <input type="tel" class="auth-input" id="regPhone" placeholder="+7 (___) ___-__-__" required>
+            <i class="fas fa-phone field-icon"></i>
+          </div>
+          <div class="phone-hint">Формат: +7 (999) 123-45-67</div>
+          <div class="auth-field">
+            <input type="password" class="auth-input" id="regPassword" placeholder="Пароль (мин. 6 символов)" required minlength="6">
+            <i class="fas fa-lock field-icon"></i>
+          </div>
+          <div class="auth-field">
+            <input type="password" class="auth-input" id="regPasswordConfirm" placeholder="Повторите пароль" required minlength="6">
+            <i class="fas fa-lock field-icon"></i>
+          </div>
+          <button type="submit" class="auth-submit"><i class="fas fa-user-plus"></i> Создать аккаунт</button>
+        </form>
+      </div>
+
+      <div class="auth-divider">или через соцсети</div>
+      <div class="social-buttons">
+        <button class="social-btn google" onclick="socialAuth('Google')"><i class="fab fa-google"></i> Google</button>
+        <button class="social-btn vk" onclick="socialAuth('VK')"><i class="fab fa-vk"></i> ВКонтакте</button>
+        <button class="social-btn tg" onclick="socialAuth('Telegram')"><i class="fab fa-telegram"></i> Telegram</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ==================== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ====================
+    document.querySelectorAll('.nav-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const target = tab.dataset.tab;
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('tab-' + target).classList.add('active');
+        if (target === 'home') {
+          document.getElementById('homeMain').classList.remove('hidden');
+          document.getElementById('stateSection').classList.add('hidden');
+          document.getElementById('crimeSection').classList.add('hidden');
+          document.getElementById('lawSection').classList.add('hidden');
+        }
+      });
+    });
+
+    function openSection(sectionId) {
+      document.getElementById('homeMain').classList.add('hidden');
+      document.getElementById('stateSection').classList.add('hidden');
+      document.getElementById('crimeSection').classList.add('hidden');
+      document.getElementById('lawSection').classList.add('hidden');
+      document.getElementById(sectionId).classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function closeSection(sectionId) {
+      document.getElementById(sectionId).classList.add('hidden');
+      document.getElementById('homeMain').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ==================== ПОИСК ПО РОЛЯМ ====================
+    const searchInput = document.getElementById('roleSearch');
+    if (searchInput) {
+      let timeout;
+      searchInput.addEventListener('input', function(e) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          const query = e.target.value.toLowerCase().trim();
+          document.querySelectorAll('#tab-roles .role-card').forEach(card => {
+            const name = card.dataset.role || '';
+            card.style.display = name.toLowerCase().includes(query) ? '' : 'none';
+          });
+          document.querySelectorAll('#tab-roles .category-section').forEach(section => {
+            const visible = section.querySelectorAll('.role-card:not([style*="display: none"])');
+            section.style.display = visible.length > 0 ? '' : 'none';
+          });
+        }, 150);
+      });
+    }
+
+    // ==================== ВЫДАЧА РОЛЕЙ ====================
+    const previewBtn = document.getElementById('previewBtn');
+    const previewArea = document.getElementById('previewArea');
+    const userNameEl = document.getElementById('userName');
+    const roleSelectEl = document.getElementById('roleSelect');
+    const commentTextEl = document.getElementById('commentText');
+
+    if (previewBtn) {
+      previewBtn.addEventListener('click', () => {
+        const name = userNameEl.value.trim() || 'Безымянный';
+        const role = roleSelectEl.value;
+        const comment = commentTextEl.value.trim();
+
+        previewArea.innerHTML = `
+          <div style="background: rgba(12,6,30,0.7); border-radius: 16px; padding: 14px; border: 1px solid rgba(255,255,255,0.08); display:flex; align-items:center; gap:12px; margin-bottom: 10px;">
+            <div style="width:46px; height:46px; border-radius:14px; background: linear-gradient(135deg,#ff00a8,#7b00ff); display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:900; color:#fff;">${name.charAt(0).toUpperCase()}</div>
+            <div style="display:flex; flex-direction:column; gap:5px; flex:1; min-width:0;">
+              <div style="font-size:14px; font-weight:800; color:#fff; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                ${name}
+                <span style="font-size:9.5px; font-weight:800; padding:4px 10px; border-radius:30px; background:linear-gradient(135deg,#aaff00,#00ff88); color:#003322; text-transform:uppercase;"><i class="fas fa-gavel"></i> ${role}</span>
+              </div>
+              <div style="font-size:11px; color:#a8b0d6;"><i class="fas fa-clock"></i> Только что · <i class="fas fa-check-circle" style="color:#2ecc71;"></i> Роль выдана</div>
+            </div>
+          </div>
+          ${comment ? `
+          <div style="background: rgba(12,6,30,0.7); border-radius: 14px; padding: 14px; border: 1px solid rgba(255,255,255,0.06); font-size:13px; color:#d0d8f0; line-height:1.6;">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.06);">
+              <div style="width:30px; height:30px; border-radius:10px; background: linear-gradient(135deg,#ff00a8,#7b00ff); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; color:#fff;">${name.charAt(0).toUpperCase()}</div>
+              <div style="display:flex; flex-direction:column; gap:2px;">
+                <div style="font-weight:800; font-size:12.5px; color:#fff;">${name}</div>
+                <div style="font-size:10.5px; color:#7b88b8;">Только что · с ролью <strong style="color:#b0bce0;">${role}</strong></div>
+              </div>
+            </div>
+            ${comment}
+          </div>` : ''}
+        `;
+      });
+    }
+
+    // ==================== АВТОРИЗАЦИЯ ====================
+    const authOverlay = document.getElementById('authOverlay');
+
+    function openAuth(mode) {
+      authOverlay.classList.add('open');
+      switchAuthTab(mode || 'login');
+      document.body.style.overflow = 'hidden';
+      // Прокручиваем окно авторизации вверх на мобильных
+      authOverlay.scrollTop = 0;
+    }
+
+    function closeAuth() {
+      authOverlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    authOverlay.addEventListener('click', (e) => {
+      if (e.target === authOverlay) closeAuth();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && authOverlay.classList.contains('open')) closeAuth();
+    });
+
+    function switchAuthTab(mode) {
+      const isLogin = mode === 'login';
+      document.getElementById('tabLoginBtn').classList.toggle('active', isLogin);
+      document.getElementById('tabRegisterBtn').classList.toggle('active', !isLogin);
+      document.getElementById('paneLogin').classList.toggle('active', isLogin);
+      document.getElementById('paneRegister').classList.toggle('active', !isLogin);
+      // Прокрутка окна вверх при переключении
+      authOverlay.scrollTop = 0;
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      if (!email || !password) return;
+
+      const fakeUser = {
+        fullName: email.includes('@') ? email.split('@')[0] : 'Пользователь',
+        username: email.includes('@') ? '@' + email.split('@')[0] : '@user',
+        role: 'Игрок',
+        avatar: (email.charAt(0) || 'U').toUpperCase()
+      };
+      loginUser(fakeUser);
+      closeAuth();
+    }
+
+    function handleRegister(e) {
+      e.preventDefault();
+      const fullName = document.getElementById('regFullName').value.trim();
+      const username = document.getElementById('regUsername').value.trim();
+      const password = document.getElementById('regPassword').value;
+      const passwordConfirm = document.getElementById('regPasswordConfirm').value;
+
+      if (password !== passwordConfirm) {
+        alert('Пароли не совпадают!');
+        return;
+      }
+
+      const fakeUser = {
+        fullName: fullName || 'Новый игрок',
+        username: '@' + (username || 'user'),
+        role: 'Игрок',
+        avatar: (fullName.charAt(0) || 'U').toUpperCase()
+      };
+      loginUser(fakeUser);
+      closeAuth();
+    }
+
+    function socialAuth(provider) {
+      const fakeUser = {
+        fullName: provider + ' Пользователь',
+        username: '@' + provider.toLowerCase() + '_user',
+        role: 'Игрок',
+        avatar: provider.charAt(0)
+      };
+      alert('Авторизация через ' + provider + ' (демо)\n\nВ реальном проекте здесь будет OAuth-редирект.');
+      loginUser(fakeUser);
+      closeAuth();
+    }
+
+    // Установка авторизованного пользователя
+    function loginUser(user) {
+      document.getElementById('profileGuestCard').style.display = 'none';
+      document.getElementById('profileAuthCard').style.display = 'block';
+
+      document.getElementById('profileAvatar').innerHTML = user.avatar + '<span class="status-dot"></span>';
+      document.getElementById('profileFullName').textContent = user.fullName;
+      document.getElementById('profileUsername').textContent = user.username;
+      document.getElementById('profileRoleBadge').innerHTML = '<i class="fas fa-gavel"></i> ' + user.role;
+
+      const headerBtn = document.querySelector('.auth-header-btn.primary');
+      if (headerBtn) {
+        headerBtn.innerHTML = '<i class="fas fa-user"></i> ' + user.fullName.split(' ')[0];
+        headerBtn.onclick = () => alert('Профиль: ' + user.fullName);
+      }
+
+      // Обновляем мобильное меню
+      updateMobileProfile();
+    }
+
+    function logoutUser() {
+      document.getElementById('profileAuthCard').style.display = 'none';
+      document.getElementById('profileGuestCard').style.display = 'block';
+
+      const headerBtn = document.querySelector('.auth-header-btn.primary');
+      if (headerBtn) {
+        headerBtn.innerHTML = '<i class="fas fa-right-to-bracket"></i> Войти';
+        headerBtn.onclick = () => openAuth('login');
+      }
+
+      updateMobileProfile();
+    }
+
+    // ==================== МОБИЛЬНОЕ МЕНЮ ПРОФИЛЯ ====================
+    const mobileProfileOverlay = document.getElementById('mobileProfileOverlay');
+    const mobileProfileContent = document.getElementById('mobileProfileContent');
+
+    function openMobileProfile() {
+      updateMobileProfile();
+      mobileProfileOverlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileProfile(e) {
+      if (e && e.target !== mobileProfileOverlay && e.type === 'click') return;
+      mobileProfileOverlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function updateMobileProfile() {
+      // Копируем содержимое правой панели в мобильное меню
+      const isAuth = document.getElementById('profileAuthCard').style.display !== 'none';
+
+      if (isAuth) {
+        const avatar = document.getElementById('profileAvatar').innerHTML;
+        const fullName = document.getElementById('profileFullName').textContent;
+        const username = document.getElementById('profileUsername').textContent;
+        const roleBadge = document.getElementById('profileRoleBadge').innerHTML;
+
+        mobileProfileContent.innerHTML = `
+          <div class="profile-card" style="margin-bottom:0;">
+            <div class="profile-header">
+              <div class="profile-avatar-lg">${avatar}</div>
+              <div class="profile-header-info">
+                <div class="profile-fullname">${fullName}</div>
+                <div class="profile-username">${username}</div>
+                <span class="profile-role-badge">${roleBadge}</span>
+              </div>
+            </div>
+            <div class="profile-stats">
+              <div class="profile-stat"><div class="num">128</div><div class="lbl">Сообщений</div></div>
+              <div class="profile-stat"><div class="num">4.2k</div><div class="lbl">Репутация</div></div>
+              <div class="profile-stat"><div class="num">14</div><div class="lbl">Дней</div></div>
+            </div>
+            <div class="profile-actions">
+              <button class="profile-btn" onclick="alert('Открытие профиля (демо)')"><i class="fas fa-user"></i> Мой профиль</button>
+              <button class="profile-btn" onclick="alert('Настройки (демо)')"><i class="fas fa-gear"></i> Настройки</button>
+              <button class="profile-btn danger" onclick="logoutUser(); closeMobileProfile();"><i class="fas fa-right-from-bracket"></i> Выйти</button>
+            </div>
+          </div>
+        `;
+      } else {
+        mobileProfileContent.innerHTML = `
+          <div class="profile-card" style="margin-bottom:0;">
+            <div class="profile-guest">
+              <div class="guest-icon"><i class="fas fa-user"></i></div>
+              <h4>Вы не авторизованы</h4>
+              <p>Войдите или создайте аккаунт, чтобы получить доступ ко всем функциям форума.</p>
+              <div style="display:flex; flex-direction:column; gap:8px;">
+                <button class="auth-header-btn primary" onclick="closeMobileProfile(); openAuth('login')" style="justify-content:center;"><i class="fas fa-right-to-bracket"></i> Войти</button>
+                <button class="auth-header-btn" onclick="closeMobileProfile(); openAuth('register')" style="justify-content:center;"><i class="fas fa-user-plus"></i> Регистрация</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // ==================== МАСКА ТЕЛЕФОНА ====================
+    const phoneInput = document.getElementById('regPhone');
+    if (phoneInput) {
+      phoneInput.addEventListener('input', function(e) {
+        let v = e.target.value.replace(/\D/g, '');
+        if (v.startsWith('8')) v = '7' + v.slice(1);
+        if (!v.startsWith('7')) v = '7' + v;
+        v = v.slice(0, 11);
+        let formatted = '+7';
+        if (v.length > 1) formatted += ' (' + v.slice(1, 4);
+        if (v.length >= 5) formatted += ') ' + v.slice(4, 7);
+        if (v.length >= 8) formatted += '-' + v.slice(7, 9);
+        if (v.length >= 10) formatted += '-' + v.slice(9, 11);
+        e.target.value = formatted;
+      });
+    }
+
+    // Инициализация мобильного меню
+    updateMobileProfile();
+  </script>
+</body>
+</html>
